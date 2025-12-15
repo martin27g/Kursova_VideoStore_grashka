@@ -1,0 +1,87 @@
+﻿@page
+@model Kursova_VideoStore.Pages.OrderDetails.IndexModel
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h1>Order Details</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<form asp-page="./Index" method="get">
+    <p>
+        Search by film or customer:
+        <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+        <input type="submit" value="Search" class="btn btn-default" />
+        <a asp-page="./Index">Back to full list</a>
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-page="./Index"
+                   asp-route-sortOrder="@Model.QuantitySort"
+                   asp-route-currentFilter="@Model.CurrentFilter">
+                    @Html.DisplayNameFor(model => model.OrderDetails[0].Quantity)
+                </a>
+            </th>
+            <th>
+                <a asp-page="./Index"
+                   asp-route-sortOrder="@Model.OrderSort"
+                   asp-route-currentFilter="@Model.CurrentFilter">
+                    Order Date
+                </a>
+            </th>
+            <th>
+                <a asp-page="./Index"
+                   asp-route-sortOrder="@Model.FilmSort"
+                   asp-route-currentFilter="@Model.CurrentFilter">
+                    @Html.DisplayNameFor(model => model.OrderDetails[0].Film)
+                </a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.Quantity</td>
+                <td>@item.Order.OrderDate.ToShortDateString()</td>
+                <td>@item.Film.Title</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.OrderDetailID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.OrderDetailID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.OrderDetailID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.OrderDetails.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.OrderDetails.HasNextPage ? "disabled" : "";
+}
+
+<div class="btn-group">
+    <a asp-page="./Index"
+       asp-route-sortOrder="@Model.CurrentSort"
+       asp-route-pageIndex="@(Model.OrderDetails.PageIndex - 1)"
+       asp-route-currentFilter="@Model.CurrentFilter"
+       class="btn btn-default @prevDisabled">
+        Previous
+    </a>
+    <a asp-page="./Index"
+       asp-route-sortOrder="@Model.CurrentSort"
+       asp-route-pageIndex="@(Model.OrderDetails.PageIndex + 1)"
+       asp-route-currentFilter="@Model.CurrentFilter"
+       class="btn btn-default @nextDisabled">
+        Next
+    </a>
+</div>

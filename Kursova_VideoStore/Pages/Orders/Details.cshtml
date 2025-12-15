@@ -1,0 +1,53 @@
+﻿@page
+@model Kursova_VideoStore.Pages.Orders.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Order</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Customer</dt>
+        <dd class="col-sm-10">
+            @Model.Order.Customer?.FirstName @Model.Order.Customer?.LastName
+        </dd>
+
+        <dt class="col-sm-2">Employee</dt>
+        <dd class="col-sm-10">
+            @Model.Order.Employee?.FirstName @Model.Order.Employee?.LastName
+        </dd>
+
+        <dt class="col-sm-2">Order Date</dt>
+        <dd class="col-sm-10">
+            @Model.Order.OrderDate.ToShortDateString()
+        </dd>
+
+        <dt class="col-sm-2">Films</dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Film Title</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                @foreach (var detail in Model.Order.OrderDetails)
+                {
+                    <tr>
+                        <td>@detail.Film?.Title</td>
+                        <td>@detail.Quantity</td>
+                        <td>@detail.Film?.Price</td>
+                    </tr>
+                }
+            </table>
+        </dd>
+    </dl>
+
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Order.OrderID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
