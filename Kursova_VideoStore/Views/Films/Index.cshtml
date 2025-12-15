@@ -1,14 +1,19 @@
 ﻿@model IEnumerable<Videoteka.Models.Film>
+@using Kursova_VideoStore.Data
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Film Catalog</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.IsInRole(Roles.AdminEndUser))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New Film</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -27,33 +32,37 @@
             <th>
                 @Html.DisplayNameFor(model => model.Stock)
             </th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FilmID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FilmID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FilmID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+                <td>
+                    @if (User.IsInRole(Roles.AdminEndUser))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.FilmID">Edit</a> <span>|</span>
+                        <a asp-action="Delete" asp-route-id="@item.FilmID">Delete</a> <span>|</span>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.FilmID">Details</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

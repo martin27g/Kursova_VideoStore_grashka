@@ -36,6 +36,8 @@ using (var scope = app.Services.CreateScope())
     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
+    await context.Database.MigrateAsync(); 
+
     await DbInitializer.InitializeAsync(context, userManager, roleManager);
 }
 
