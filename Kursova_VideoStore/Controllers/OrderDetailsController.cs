@@ -67,7 +67,7 @@ namespace Kursova_VideoStore.Controllers
                     orderDetails = orderDetails.OrderByDescending(s => s.Film.Title);
                     break;
                 case "Status":
-                    orderDetails = orderDetails.OrderBy(s => s.ReturnDate); // Nulls (Rented) first usually
+                    orderDetails = orderDetails.OrderBy(s => s.ReturnDate);
                     break;
                 default:
                     orderDetails = orderDetails.OrderBy(s => s.OrderID);
@@ -86,7 +86,7 @@ namespace Kursova_VideoStore.Controllers
             var item = await _context.OrderDetails.FindAsync(id);
             if (item != null && item.ReturnDate == null)
             {
-                item.ReturnDate = DateTime.Now; // Set return date to NOW
+                item.ReturnDate = DateTime.Now;
                 _context.Update(item);
                 await _context.SaveChangesAsync();
             }
@@ -104,9 +104,13 @@ namespace Kursova_VideoStore.Controllers
             return View(orderDetail);
         }
 
+        // GET: OrderDetails/Create
         public IActionResult Create()
         {
-            ViewData["FilmID"] = new SelectList(_context.Films, "FilmID", "Title");
+            // FIX: Only show films that are Active
+            var activeFilms = _context.Films.Where(f => f.IsActive);
+
+            ViewData["FilmID"] = new SelectList(activeFilms, "FilmID", "Title");
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID");
             return View();
         }
@@ -117,25 +121,32 @@ namespace Kursova_VideoStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                // LOGIC: Default rental is 7 days from today
                 orderDetail.DueDate = DateTime.Now.AddDays(7);
-                orderDetail.ReturnDate = null; // Initially not returned
+                orderDetail.ReturnDate = null;
 
                 _context.Add(orderDetail);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FilmID"] = new SelectList(_context.Films, "FilmID", "Title", orderDetail.FilmID);
+            // If failed, reload list (filtered)
+            ViewData["FilmID"] = new SelectList(_context.Films.Where(f => f.IsActive), "FilmID", "Title", orderDetail.FilmID);
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", orderDetail.OrderID);
             return View(orderDetail);
         }
 
+        // GET: OrderDetails/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
             var orderDetail = await _context.OrderDetails.FindAsync(id);
             if (orderDetail == null) return NotFound();
+
+            // Note: For EDIT, we generally show ALL films (even inactive ones) 
+            // in case you are editing an old historical order. 
+            // However, if you want to force them to switch to an active film, use the .Where() clause here too.
+            // For now, I will leave it showing all films to preserve history editing.
             ViewData["FilmID"] = new SelectList(_context.Films, "FilmID", "Title", orderDetail.FilmID);
+
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", orderDetail.OrderID);
             return View(orderDetail);
         }
