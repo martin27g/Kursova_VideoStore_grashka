@@ -1,53 +1,78 @@
-﻿@model IEnumerable<Videoteka.Models.Employee>
+﻿@using Videoteka.Models
+@using Kursova_VideoStore.Data
+@model PaginatedList<Employee>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Employees";
 }
 
-<h1>Index</h1>
+<h1>Staff Management</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Employee</a>
 </p>
-<table class="table">
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color mb-3">
+        <p>
+            Find by Name or Position:
+            <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-outline-primary" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Last Name</a>
+            </th>
+            <th>First Name</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PositionSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Position</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Hire Date</a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HireDate)
-            </th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HireDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EmployeeID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EmployeeID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EmployeeID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Position)</td>
+                <td>@Html.DisplayFor(modelItem => item.HireDate)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.EmployeeID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.EmployeeID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.EmployeeID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-secondary @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-secondary @nextDisabled">
+    Next
+</a>

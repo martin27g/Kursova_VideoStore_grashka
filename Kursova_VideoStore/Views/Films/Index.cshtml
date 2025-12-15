@@ -1,8 +1,9 @@
-﻿@model IEnumerable<Videoteka.Models.Film>
+﻿@using Videoteka.Models
 @using Kursova_VideoStore.Data
+@model PaginatedList<Film>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Film Catalog";
 }
 
 <h1>Film Catalog</h1>
@@ -14,23 +15,34 @@
     </p>
 }
 
-<table class="table">
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color mb-3">
+        <p>
+            Find by Title or Genre:
+            <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-outline-primary" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Title</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Genre)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GenreSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Genre</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReleaseYear)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["YearSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Release Year</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Price</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Stock)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StockSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Stock</a>
             </th>
             <th>Actions</th>
         </tr>
@@ -66,3 +78,23 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-secondary @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-secondary @nextDisabled">
+    Next
+</a>

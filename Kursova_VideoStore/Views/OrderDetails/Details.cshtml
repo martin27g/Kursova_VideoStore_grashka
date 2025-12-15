@@ -1,36 +1,59 @@
 ﻿@model Videoteka.Models.OrderDetail
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Rental Details";
 }
 
-<h1>Details</h1>
+<h1>Rental Details</h1>
 
 <div>
-    <h4>OrderDetail</h4>
+    <h4>Rental Information</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
+        <dt class="col-sm-2">
+            Order ID
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Order)
-        </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Order.OrderID)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Film)
+
+        <dt class="col-sm-2">
+            Film
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.Title)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DueDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.DueDate.ToShortDateString()
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ReturnDate)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.ReturnDate.HasValue)
+            {
+                <span class="text-success">Returned on @Model.ReturnDate.Value.ToShortDateString()</span>
+            }
+            else
+            {
+                <span class="text-danger">Not Returned</span>
+            }
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.OrderDetailID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.OrderDetailID" class="btn btn-primary">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace Videoteka.Models
 {
@@ -16,14 +17,21 @@ namespace Videoteka.Models
         [StringLength(50, ErrorMessage = "Genre cannot exceed 50 characters.")]
         public string? Genre { get; set; }
 
+        [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
+        public string? Description { get; set; }
+
         [Display(Name = "Release Year")]
         public int ReleaseYear { get; set; }
 
         [Range(0, 999.99, ErrorMessage = "Price must be between 0 and 999.99.")]
+        [DataType(DataType.Currency)]
         public decimal Price { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Stock must be a non-negative number.")]
         public int Stock { get; set; }
+
+        // Soft Delete Flag: Default to true so new films are visible
+        public bool IsActive { get; set; } = true;
 
         public ICollection<OrderDetail>? OrderDetails { get; set; }
     }

@@ -1,10 +1,8 @@
 ﻿using Kursova_VideoStore.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Videoteka.Models;
@@ -22,26 +20,69 @@ namespace Kursova_VideoStore.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? pageNumber)
         {
-            return View(await _context.Employees.ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["PositionSortParm"] = sortOrder == "Position" ? "pos_desc" : "Position";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var employees = _context.Employees.AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                employees = employees.Where(s => s.LastName.Contains(searchString)
+                                       || s.FirstName.Contains(searchString)
+                                       || s.Position.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    employees = employees.OrderByDescending(s => s.LastName);
+                    break;
+                case "Position":
+                    employees = employees.OrderBy(s => s.Position);
+                    break;
+                case "pos_desc":
+                    employees = employees.OrderByDescending(s => s.Position);
+                    break;
+                case "Date":
+                    employees = employees.OrderBy(s => s.HireDate);
+                    break;
+                case "date_desc":
+                    employees = employees.OrderByDescending(s => s.HireDate);
+                    break;
+                default:
+                    employees = employees.OrderBy(s => s.LastName);
+                    break;
+            }
+
+            int pageSize = 5;
+            return View(await PaginatedList<Employee>.CreateAsync(employees.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(m => m.EmployeeID == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var employee = await _context.Employees.FirstOrDefaultAsync(m => m.EmployeeID == id);
+            if (employee == null) return NotFound();
             return View(employee);
         }
 
@@ -52,8 +93,6 @@ namespace Kursova_VideoStore.Controllers
         }
 
         // POST: Employees/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EmployeeID,FirstName,LastName,Position,HireDate")] Employee employee)
@@ -70,31 +109,18 @@ namespace Kursova_VideoStore.Controllers
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
+            if (employee == null) return NotFound();
             return View(employee);
         }
 
         // POST: Employees/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EmployeeID,FirstName,LastName,Position,HireDate")] Employee employee)
         {
-            if (id != employee.EmployeeID)
-            {
-                return NotFound();
-            }
-
+            if (id != employee.EmployeeID) return NotFound();
             if (ModelState.IsValid)
             {
                 try
@@ -104,14 +130,8 @@ namespace Kursova_VideoStore.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.EmployeeID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!EmployeeExists(employee.EmployeeID)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -121,18 +141,9 @@ namespace Kursova_VideoStore.Controllers
         // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(m => m.EmployeeID == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var employee = await _context.Employees.FirstOrDefaultAsync(m => m.EmployeeID == id);
+            if (employee == null) return NotFound();
             return View(employee);
         }
 
@@ -142,11 +153,7 @@ namespace Kursova_VideoStore.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
-            {
-                _context.Employees.Remove(employee);
-            }
-
+            if (employee != null) _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

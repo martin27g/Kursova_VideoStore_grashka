@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kursova_VideoStore.Migrations
 {
     [DbContext(typeof(VideotekaContext))]
-    partial class VideotekaContextModelSnapshot : ModelSnapshot
+    [Migration("20251215214523_AddDescriptionAndSoftDelete")]
+    partial class AddDescriptionAndSoftDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -353,9 +356,6 @@ namespace Kursova_VideoStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailID"));
 
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("FilmID")
                         .HasColumnType("int");
 
@@ -364,9 +364,6 @@ namespace Kursova_VideoStore.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("OrderDetailID");
 
