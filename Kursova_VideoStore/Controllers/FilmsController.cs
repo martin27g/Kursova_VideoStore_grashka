@@ -90,7 +90,7 @@ namespace Kursova_VideoStore.Controllers
                     break;
             }
 
-            int pageSize = 5;
+            int pageSize = 8;
             return View(await PaginatedList<Film>.CreateAsync(films.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 

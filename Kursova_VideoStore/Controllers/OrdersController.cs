@@ -28,6 +28,10 @@ namespace Kursova_VideoStore.Controllers
             int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
+
+            // NEW: Sort parameter for Order ID
+            ViewData["IdSortParm"] = sortOrder == "id" ? "id_desc" : "id";
+
             ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             ViewData["CustomerSortParm"] = sortOrder == "Customer" ? "customer_desc" : "Customer";
             ViewData["EmployeeSortParm"] = sortOrder == "Employee" ? "employee_desc" : "Employee";
@@ -49,15 +53,31 @@ namespace Kursova_VideoStore.Controllers
                 .Include(o => o.Employee)
                 .AsQueryable();
 
+            // Search logic (Added search by OrderID just in case)
             if (!String.IsNullOrEmpty(searchString))
             {
-                orders = orders.Where(s => s.Customer.LastName.Contains(searchString)
-                                       || s.Customer.FirstName.Contains(searchString)
-                                       || s.Employee.LastName.Contains(searchString));
+                if (int.TryParse(searchString, out int searchId))
+                {
+                    orders = orders.Where(s => s.OrderID == searchId);
+                }
+                else
+                {
+                    orders = orders.Where(s => s.Customer.LastName.Contains(searchString)
+                                           || s.Customer.FirstName.Contains(searchString)
+                                           || s.Employee.LastName.Contains(searchString));
+                }
             }
 
             switch (sortOrder)
             {
+                // NEW: Sort cases for Order ID
+                case "id":
+                    orders = orders.OrderBy(s => s.OrderID);
+                    break;
+                case "id_desc":
+                    orders = orders.OrderByDescending(s => s.OrderID);
+                    break;
+
                 case "date_desc":
                     orders = orders.OrderByDescending(s => s.OrderDate);
                     break;
@@ -82,6 +102,8 @@ namespace Kursova_VideoStore.Controllers
             return View(await PaginatedList<Order>.CreateAsync(orders.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
+        // ... [Rest of the file remains unchanged] ...
+
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -94,7 +116,6 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
-        // GET: Orders/Create
         public IActionResult Create()
         {
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "Email");
@@ -102,12 +123,10 @@ namespace Kursova_VideoStore.Controllers
             return View();
         }
 
-        // POST: Orders/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderID,CustomerID,EmployeeID,OrderDate")] Order order)
         {
-            // Note: In real scenarios, you might auto-set OrderDate here
             if (ModelState.IsValid)
             {
                 _context.Add(order);
@@ -119,7 +138,6 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
-        // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -130,7 +148,6 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
-        // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("OrderID,CustomerID,EmployeeID,OrderDate")] Order order)
@@ -156,7 +173,6 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
-        // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -168,7 +184,6 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
-        // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

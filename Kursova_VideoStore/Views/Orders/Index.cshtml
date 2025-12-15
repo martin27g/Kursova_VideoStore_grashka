@@ -27,6 +27,9 @@
     <thead>
         <tr>
             <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["IdSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Order ID</a>
+            </th>
+            <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Order Date</a>
             </th>
             <th>
@@ -42,6 +45,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderID)
+                </td>
                 <td>@Html.DisplayFor(modelItem => item.OrderDate)</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Customer.FirstName)
