@@ -1,8 +1,55 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1>Видеотека</h1>
-    <p class="home-page-text" >не особено пълна и добре работеща, но....</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<div class="container">
+    <div class="hero-section">
+        <h1 class="hero-title">Видеотека</h1>
+
+        <p class="mb-4 text-white-50"><i>(не e особено пълна и добре работеща, но....)</i></p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Films" asp-action="Index" class="btn btn-primary btn-lg px-4 shadow-sm d-inline-flex align-items-center justify-content-center">
+                <i class="bi me-2"></i>Разгледай Филмите
+            </a>
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn  btn-outline-warning btn-lg px-4 py-3">
+                    Влизане
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="icon-box">
+                    <i class="bi bi-film"></i>
+                </div>
+                <h3>Богат Каталог</h3>
+                <p class="text-muted">Не е съвсем вярно, но кой чете малкия шрифт.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="icon-box">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h3>7 Дни Наем</h3>
+                <p class="text-muted">Вземете филм днес и се насладете на цяла седмица спокойствие преди връщане.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="icon-box">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>Лесно & Сигурно</h3>
+                <p class="text-muted">Абсолютна и безсрамна лъжа от наша страна.</p>
+            </div>
+        </div>
+    </div>
 </div>

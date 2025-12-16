@@ -18,8 +18,6 @@ namespace Kursova_VideoStore.Controllers
         {
             _context = context;
         }
-
-        // GET: Employees
         public async Task<IActionResult> Index(
             string sortOrder,
             string currentFilter,
@@ -77,7 +75,7 @@ namespace Kursova_VideoStore.Controllers
             return View(await PaginatedList<Employee>.CreateAsync(employees.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
-        // GET: Employees/Details/5
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -86,13 +84,12 @@ namespace Kursova_VideoStore.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Create
+
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EmployeeID,FirstName,LastName,Position,HireDate")] Employee employee)
@@ -106,7 +103,6 @@ namespace Kursova_VideoStore.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -115,7 +111,6 @@ namespace Kursova_VideoStore.Controllers
             return View(employee);
         }
 
-        // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EmployeeID,FirstName,LastName,Position,HireDate")] Employee employee)
@@ -138,7 +133,6 @@ namespace Kursova_VideoStore.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -147,7 +141,6 @@ namespace Kursova_VideoStore.Controllers
             return View(employee);
         }
 
-        // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

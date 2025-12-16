@@ -20,7 +20,6 @@ namespace Kursova_VideoStore.Controllers
             _context = context;
         }
 
-        // GET: Orders
         public async Task<IActionResult> Index(
             string sortOrder,
             string currentFilter,
@@ -29,7 +28,7 @@ namespace Kursova_VideoStore.Controllers
         {
             ViewData["CurrentSort"] = sortOrder;
 
-            // NEW: Sort parameter for Order ID
+            // сортиране 
             ViewData["IdSortParm"] = sortOrder == "id" ? "id_desc" : "id";
 
             ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
@@ -47,13 +46,13 @@ namespace Kursova_VideoStore.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-            // Include related data (Customer and Employee)
+            // включва Customer и Employee
             var orders = _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Employee)
                 .AsQueryable();
 
-            // Search logic (Added search by OrderID just in case)
+            // Search logic 
             if (!String.IsNullOrEmpty(searchString))
             {
                 if (int.TryParse(searchString, out int searchId))
@@ -70,7 +69,7 @@ namespace Kursova_VideoStore.Controllers
 
             switch (sortOrder)
             {
-                // NEW: Sort cases for Order ID
+                // сортиране по ID
                 case "id":
                     orders = orders.OrderBy(s => s.OrderID);
                     break;
@@ -102,9 +101,6 @@ namespace Kursova_VideoStore.Controllers
             return View(await PaginatedList<Order>.CreateAsync(orders.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
-        // ... [Rest of the file remains unchanged] ...
-
-        // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();

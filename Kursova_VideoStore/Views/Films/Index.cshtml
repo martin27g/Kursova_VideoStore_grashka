@@ -3,98 +3,116 @@
 @model PaginatedList<Film>
 
 @{
-    ViewData["Title"] = "Film Catalog";
+    ViewData["Title"] = "Филми";
 }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
-<h1>Film Catalog</h1>
+<div class="container">
 
-@if (User.IsInRole(Roles.AdminEndUser))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Create New Film</a>
-    </p>
-}
+    <div class="hero-section text-center">
+        <div class="position-relative z-index-1">
+            <h1 class="display-5 fw-bold">Каталог</h1>
+            <p class="text-white-50">Изберете филм за вашата вечер</p>
+        </div>
 
-<form asp-action="Index" method="get">
-    <div class="form-actions no-color mb-3">
-        <p>
-            Find by Title or Genre:
-            <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-outline-primary" /> |
-            <a asp-action="Index">Back to Full List</a>
-        </p>
+        @if (User.IsInRole(Roles.AdminEndUser))
+        {
+            <div class="mt-3">
+                <a asp-action="Create" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-plus-lg"></i> Добави Филм
+                </a>
+            </div>
+        }
     </div>
-</form>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Title</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["GenreSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Genre</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["YearSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Release Year</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Price</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["StockSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Stock</a>
-            </th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+    <div class="row g-3 mb-4 align-items-center">
+        <div class="col-md-6">
+            <form asp-action="Index" method="get" class="d-flex shadow-sm rounded">
+                <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" class="form-control border-dark-subtle" placeholder="Търсене..." style="padding: 0.8rem;" />
+                <button type="submit" class="btn btn-light border-dark-subtle px-4 mx-2" ><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <div class="dropdown">
+                <button class="btn btn-light border-dark-subtle dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                    Сортиране
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]">Заглавие</a></li>
+                    <li><a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["GenreSortParm"]">Жанр</a></li>
+                    <li><a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["YearSortParm"]">Година</a></li>
+                    <li><a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">Цена</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Genre)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReleaseYear)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Stock)
-                </td>
-                <td>
-                    @if (User.IsInRole(Roles.AdminEndUser))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.FilmID">Edit</a> <span>|</span>
-                        <a asp-action="Delete" asp-route-id="@item.FilmID">Delete</a> <span>|</span>
-                    }
-                    <a asp-action="Details" asp-route-id="@item.FilmID">Details</a>
-                </td>
-            </tr>
+            <div class="col-lg-4">
+                <div class="card h-100 border-1 shadow-sm film-ticket-card" style="background-color:#fff;">
+                    <div class="card-body d-flex flex-column p-5">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-primary fw-bold text-uppercase small" style="letter-spacing: 1px;">
+                                @item.Genre
+                            </span>
+                            <span class="text-black">@item.ReleaseYear</span>
+                        </div>
+
+                        <h4 class="fw-bold mb-3">
+                            <a asp-action="Details" asp-route-id="@item.FilmID" class="text-dark text-decoration-none stretched-link">
+                                @item.Title
+                            </a>
+                        </h4>
+
+                        <p class="card-text text-secondary small flex-grow-1 mb-4">
+                            @if (!string.IsNullOrEmpty(item.Description) && item.Description.Length > 100)
+                            {
+                                @(item.Description.Substring(0, 100) + "...")
+                            }
+                            else
+                            {
+                                @(item.Description ?? "Няма описание.")
+                            }
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <span class="fw-bold fs-5">@item.Price <span class="fs-6 fw-normal">лв.</span></span>
+
+                            <div class="position-relative" style="z-index: 2;">
+                                @if (User.IsInRole(Roles.AdminEndUser))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.FilmID" class="btn btn-outline-danger btn-sm rounded-pill px-3"> Изтрий </a>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
 
-@{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-}
-
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-secondary @prevDisabled">
-    Previous
-</a>
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-secondary @nextDisabled">
-    Next
-</a>
+    <div class="d-flex justify-content-center mt-5">
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        }
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary me-2 rounded-pill px-4 @prevDisabled">
+            <i class="bi bi-chevron-left"></i> Предишна
+        </a>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-primary rounded-pill px-4 @nextDisabled">
+            Следваща <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+</div>

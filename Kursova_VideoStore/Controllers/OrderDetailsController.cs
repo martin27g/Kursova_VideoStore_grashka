@@ -20,7 +20,7 @@ namespace Kursova_VideoStore.Controllers
             _context = context;
         }
 
-        // GET: OrderDetails
+        // взимане
         public async Task<IActionResult> Index(
             string sortOrder,
             string currentFilter,
@@ -78,7 +78,7 @@ namespace Kursova_VideoStore.Controllers
             return View(await PaginatedList<OrderDetail>.CreateAsync(orderDetails.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
-        // CUSTOM ACTION: Mark as Returned
+        // Маркиране като върнат
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReturnFilm(int id)
@@ -104,7 +104,7 @@ namespace Kursova_VideoStore.Controllers
             return View(orderDetail);
         }
 
-        // GET: OrderDetails/Create
+
         public IActionResult Create()
         {
             // FIX: Only show films that are Active

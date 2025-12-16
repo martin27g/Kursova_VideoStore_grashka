@@ -40,3 +40,58 @@ body {
 .home-page-text {
     color: #EDEDED;
 }
+
+
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('https://wallpapers.com/images/hd/movie-poster-background-q1zm830g0hfww2lk.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 50px 20px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 15px;
+}
+
+.feature-card {
+    background-color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+    height: 100%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+.icon-box {
+    font-size: 2.5rem;
+    color: #0d6efd;
+    margin-bottom: 20px;
+}
+
+
+/* --- FILM LIST STYLES --- */
+
+.film-ticket-card {
+    transition: all 0.3s ease;
+    border: 40px solid 
+}
+
+    .film-ticket-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(13,110,253,0.2) !important; 
+    }

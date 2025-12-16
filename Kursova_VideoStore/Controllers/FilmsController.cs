@@ -46,14 +46,14 @@ namespace Kursova_VideoStore.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-            // 1. FILTER ACTIVE ONLY (Soft Delete Logic)
+            // За филтрирането
             var films = _context.Films.Where(f => f.IsActive).AsQueryable();
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 films = films.Where(s => s.Title.Contains(searchString)
                                        || s.Genre.Contains(searchString)
-                                       || s.Description.Contains(searchString)); // Search description too
+                                       || s.Description.Contains(searchString)); 
             }
 
             switch (sortOrder)
@@ -90,7 +90,7 @@ namespace Kursova_VideoStore.Controllers
                     break;
             }
 
-            int pageSize = 8;
+            int pageSize = 9;
             return View(await PaginatedList<Film>.CreateAsync(films.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
@@ -100,9 +100,6 @@ namespace Kursova_VideoStore.Controllers
             if (id == null) return NotFound();
 
             var film = await _context.Films.FirstOrDefaultAsync(m => m.FilmID == id);
-
-            // Optional: If you want to prevent accessing deleted films via direct URL:
-            // if (film == null || !film.IsActive) return NotFound();
 
             if (film == null) return NotFound();
 
@@ -120,7 +117,7 @@ namespace Kursova_VideoStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                film.IsActive = true; // Ensure new films are active
+                film.IsActive = true; // филмът се създава като активен
                 _context.Add(film);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -176,7 +173,7 @@ namespace Kursova_VideoStore.Controllers
             {
                 // 2. SOFT DELETE LOGIC
                 film.IsActive = false;
-                _context.Update(film); // Update instead of Remove
+                _context.Update(film); 
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

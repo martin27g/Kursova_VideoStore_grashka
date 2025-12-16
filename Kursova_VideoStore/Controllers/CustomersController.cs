@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Videoteka.Models; // Required for PaginatedList and Customer
+using Videoteka.Models; 
 
 namespace Kursova_VideoStore.Controllers
 {
-    [Authorize(Roles = Roles.AdminEndUser)] // Strict Admin Access
+    [Authorize(Roles = Roles.AdminEndUser)] //Само за админи
     public class CustomersController : Controller
     {
         private readonly VideotekaContext _context;
@@ -19,7 +19,6 @@ namespace Kursova_VideoStore.Controllers
             _context = context;
         }
 
-        // GET: Customers
         public async Task<IActionResult> Index(
             string sortOrder,
             string currentFilter,
@@ -70,7 +69,6 @@ namespace Kursova_VideoStore.Controllers
             return View(await PaginatedList<Customer>.CreateAsync(customers.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
-        // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -79,13 +77,13 @@ namespace Kursova_VideoStore.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Create
+        // GET
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Customers/Create
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CustomerID,FirstName,LastName,Email,Phone,Address")] Customer customer)
@@ -99,7 +97,6 @@ namespace Kursova_VideoStore.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -108,7 +105,7 @@ namespace Kursova_VideoStore.Controllers
             return View(customer);
         }
 
-        // POST: Customers/Edit/5
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,LastName,Email,Phone,Address")] Customer customer)
@@ -131,8 +128,6 @@ namespace Kursova_VideoStore.Controllers
             }
             return View(customer);
         }
-
-        // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -141,7 +136,6 @@ namespace Kursova_VideoStore.Controllers
             return View(customer);
         }
 
-        // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
