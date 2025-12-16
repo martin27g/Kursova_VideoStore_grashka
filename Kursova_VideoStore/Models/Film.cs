@@ -30,7 +30,7 @@ namespace Videoteka.Models
         [Range(0, int.MaxValue, ErrorMessage = "Stock must be a non-negative number.")]
         public int Stock { get; set; }
 
-        // Soft Delete Flag: Default to true so new films are visible
+      
         public bool IsActive { get; set; } = true;
 
         public ICollection<OrderDetail>? OrderDetails { get; set; }

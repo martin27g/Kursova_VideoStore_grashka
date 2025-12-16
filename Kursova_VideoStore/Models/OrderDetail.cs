@@ -16,11 +16,10 @@ namespace Videoteka.Models
         [Range(1, 100)]
         public int Quantity { get; set; }
 
-        // NEW: When the movie must be back
+
         [DataType(DataType.Date)]
         public DateTime DueDate { get; set; }
 
-        // NEW: When it was actually returned (Null = Still Rented)
         [DataType(DataType.Date)]
         public DateTime? ReturnDate { get; set; }
     }

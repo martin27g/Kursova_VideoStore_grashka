@@ -20,7 +20,7 @@ public partial class VideotekaContext : IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Important: call base so Identity tables are configured
+
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Film>(entity =>

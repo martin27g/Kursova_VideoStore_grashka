@@ -27,10 +27,7 @@ namespace Kursova_VideoStore.Controllers
             int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
-
-            // сортиране 
             ViewData["IdSortParm"] = sortOrder == "id" ? "id_desc" : "id";
-
             ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             ViewData["CustomerSortParm"] = sortOrder == "Customer" ? "customer_desc" : "Customer";
             ViewData["EmployeeSortParm"] = sortOrder == "Employee" ? "employee_desc" : "Employee";
@@ -46,13 +43,11 @@ namespace Kursova_VideoStore.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-            // включва Customer и Employee
             var orders = _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Employee)
                 .AsQueryable();
 
-            // Search logic 
             if (!String.IsNullOrEmpty(searchString))
             {
                 if (int.TryParse(searchString, out int searchId))
@@ -69,14 +64,12 @@ namespace Kursova_VideoStore.Controllers
 
             switch (sortOrder)
             {
-                // сортиране по ID
                 case "id":
                     orders = orders.OrderBy(s => s.OrderID);
                     break;
                 case "id_desc":
                     orders = orders.OrderByDescending(s => s.OrderID);
                     break;
-
                 case "date_desc":
                     orders = orders.OrderByDescending(s => s.OrderDate);
                     break;
@@ -101,14 +94,20 @@ namespace Kursova_VideoStore.Controllers
             return View(await PaginatedList<Order>.CreateAsync(orders.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
+  
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
+
             var order = await _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Employee)
+                .Include(o => o.OrderDetails) 
+                .ThenInclude(od => od.Film)   
                 .FirstOrDefaultAsync(m => m.OrderID == id);
+
             if (order == null) return NotFound();
+
             return View(order);
         }
 
@@ -119,6 +118,7 @@ namespace Kursova_VideoStore.Controllers
             return View();
         }
 
+ 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderID,CustomerID,EmployeeID,OrderDate")] Order order)
@@ -134,6 +134,7 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -143,6 +144,7 @@ namespace Kursova_VideoStore.Controllers
             ViewData["EmployeeID"] = new SelectList(_context.Employees, "EmployeeID", "FirstName", order.EmployeeID);
             return View(order);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -169,6 +171,7 @@ namespace Kursova_VideoStore.Controllers
             return View(order);
         }
 
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -179,6 +182,7 @@ namespace Kursova_VideoStore.Controllers
             if (order == null) return NotFound();
             return View(order);
         }
+
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
