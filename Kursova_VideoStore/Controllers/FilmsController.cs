@@ -20,7 +20,6 @@ namespace Kursova_VideoStore.Controllers
             _context = context;
         }
 
-        // GET: Films
         [AllowAnonymous]
         public async Task<IActionResult> Index(
             string sortOrder,
@@ -33,7 +32,6 @@ namespace Kursova_VideoStore.Controllers
             ViewData["GenreSortParm"] = sortOrder == "Genre" ? "genre_desc" : "Genre";
             ViewData["YearSortParm"] = sortOrder == "Year" ? "year_desc" : "Year";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
-            ViewData["StockSortParm"] = sortOrder == "Stock" ? "stock_desc" : "Stock";
 
             if (searchString != null)
             {
@@ -46,14 +44,13 @@ namespace Kursova_VideoStore.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-            // За филтрирането
             var films = _context.Films.Where(f => f.IsActive).AsQueryable();
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 films = films.Where(s => s.Title.Contains(searchString)
                                        || s.Genre.Contains(searchString)
-                                       || s.Description.Contains(searchString)); 
+                                       || s.Description.Contains(searchString));
             }
 
             switch (sortOrder)
@@ -78,12 +75,6 @@ namespace Kursova_VideoStore.Controllers
                     break;
                 case "price_desc":
                     films = films.OrderByDescending(s => s.Price);
-                    break;
-                case "Stock":
-                    films = films.OrderBy(s => s.Stock);
-                    break;
-                case "stock_desc":
-                    films = films.OrderByDescending(s => s.Stock);
                     break;
                 default:
                     films = films.OrderBy(s => s.Title);
@@ -117,7 +108,7 @@ namespace Kursova_VideoStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                film.IsActive = true; // филмът се създава като активен
+                film.IsActive = true;
                 _context.Add(film);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -171,9 +162,8 @@ namespace Kursova_VideoStore.Controllers
             var film = await _context.Films.FindAsync(id);
             if (film != null)
             {
-                // 2. SOFT DELETE LOGIC
                 film.IsActive = false;
-                _context.Update(film); 
+                _context.Update(film);
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
